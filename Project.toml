@@ -1,0 +1,4 @@
+name = "WormModel"
+uuid = "639d129a-7650-11e9-3a3f-e56519d61a1f"
+authors = ["spaceLem <spacelem@minioak.com>"]
+version = "0.1.0"
