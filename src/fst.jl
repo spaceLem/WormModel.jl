@@ -1,16 +1,15 @@
-include("multiloci.jl")
-
-function calc_fst(W, num_loci, num_treated)
-	FST = zeros(num_loci)
-
+function calc_fst(W, num_treated)
 	num_gts, num_sheep = size(W)
+
+	num_loci = round(Int, log(3, num_gts))
+	FST = zeros(num_loci)
 
 	treated = 1:num_treated
 	refugia = (num_treated + 1):num_sheep
 
 	# divide the groups up
-	gts1 = vec(sum(W[:, treated], dims=2))
-	gts2 = vec(sum(W[:, refugia], dims=2))
+	gts1 = vec(sum(view(W, :, treated), dims=2))
+	gts2 = vec(sum(view(W, :, refugia), dims=2))
 	gts  = gts1 + gts2
 
 	# allele frequencies in each group
@@ -25,9 +24,9 @@ function calc_fst(W, num_loci, num_treated)
 
 	for i in 1:num_loci
 		# subgroup allele frequencies
-		p1, q1 = TAD[(2i - 1) : 2i]
-		p2, q2 = RAD[(2i - 1) : 2i]
-		p, q   = AD[(2i - 1) : 2i]
+		p1, q1 = view(TAD, 2i - 1 : 2i)
+		p2, q2 = view(RAD, 2i - 1 : 2i)
+		p, q   = view(AD, 2i - 1 : 2i)
 
 		Hexp  = 2p * q
 		Hexp1 = 2p1 * q1
@@ -53,9 +52,7 @@ function FST_strings(num_worms::Int = 5,
 
 	# add some mutations
 	for i in eachindex(X)
-		if rand() < 0.1
-			X[i] = true
-		end #if
+		X[i] = rand() < 0.1
 	end #for
 
 	display(X)
